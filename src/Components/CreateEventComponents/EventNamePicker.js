@@ -1,5 +1,6 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+
 import { useDispatch } from "react-redux";
 import { updateEventDetail, logEventData } from "@/lib/feature/EventSlice";
 
@@ -7,15 +8,18 @@ const EventNamePicker = () => {
   const dispatch = useDispatch();
   const [eventName, setEventName] = useState();
 
-  const handleEventName = (eventName) => {
+  const handleEventName = () => {
     dispatch(updateEventDetail({ key: "eventName", value: eventName }));
   };
 
+  useEffect(() => {
+    handleEventName();
+  }, [eventName]);
+
   const handleInputChange = (event) => {
-    const newName = event.target.value;
-    setEventName(newName);
-    handleEventName(eventName);
+    setEventName(event.target.value);
   };
+
   console.log(eventName);
   return (
     <div>

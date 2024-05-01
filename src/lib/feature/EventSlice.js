@@ -58,9 +58,18 @@ function calculateHours(initialTime, finishTime) {
 
 const createEvent = async (eventData) => {
   try {
+    if (
+      !eventData.eventName ||
+      !eventData.initialTime ||
+      !eventData.finishTime
+    ) {
+      alert(
+        "Please fill in all required fields (Event Name, Initial Time, Finish Time)."
+      );
+      return; // Exit function if validation fails
+    }
     await setDoc(doc(db, "events", eventData.id), eventData); // Use the generated UUID as the document ID
     alert("Event created successfully!");
-    setEventData(initialState);
   } catch (err) {
     console.error("Error creating event:", err);
   }

@@ -8,10 +8,10 @@ const timezones = {
 };
 
 const page = ({ params }) => {
-  //   const { options, parseTimezone } = useTimezoneSelect({
-  //     labelStyle,
-  //     timezones,
-  //   });
+  const { options, parseTimezone } = useTimezoneSelect({
+    labelStyle,
+    timezones,
+  });
   return (
     <div className="flex flex-col gap-4 w-full">
       <div className="bg-blackE w-full  flex justify-center ">
@@ -34,7 +34,7 @@ const page = ({ params }) => {
             <div className="w-full  lg:w-1/4">
               <div className="flex flex-col  gap-y-3">
                 <div className="text-white text-[16px] w-full ">Time Zone</div>
-                {/* <select
+                <select
                   //   onChange={handleTimeZoneChange}
                   className="w-full px-[24px] py-[12px] bg-gray-900 text-white rounded-[12px] border-none appearance-none focus:outline-none"
                 >
@@ -43,7 +43,7 @@ const page = ({ params }) => {
                       {option.label}
                     </option>
                   ))}
-                </select> */}
+                </select>
               </div>
             </div>
           </div>

@@ -57,6 +57,15 @@ body {
   color: #fff !important;
 }
 
+.rmdp-year-picker {
+  background-color: #0d0d0d !important;
+}
+.rmdp-ym {
+  .rmdp-day {
+    color: #fff !important;
+  }
+}
+
 .rmdp-calendar {
   width: 100% !important;
   margin: 20px;

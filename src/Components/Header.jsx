@@ -8,9 +8,9 @@ const Header = () => {
     <header className="sticky top-0 z-30">
       <nav class="bg-blackD  px-20  py-6  ">
         <div class="flex flex-col  conatiner gap-4   md:gap-0 md:flex-row  justify-between items-center ">
-          <a href="https://flowbite.com" class="flex items-center">
+          <Link href="/" class="flex items-center">
             <Image src={logo} />
-          </a>
+          </Link>
 
           <div className="flex flex-col  gap-4   md:flex-row items-center  gap-x-[60px] ">
             <Link
@@ -22,7 +22,7 @@ const Header = () => {
 
             <div className="relative">
               <Link
-                href={"#"}
+                href={"/"}
                 className="text-white font-semibold font-inter text-[20px]  leading-5 "
               >
                 Plan a New Event

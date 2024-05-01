@@ -1,94 +1,4 @@
-// "use client";
-// import React, { useState } from "react";
-// import { useDispatch } from "react-redux";
-// import { updateEventDetail } from "@/lib/feature/EventSlice";
-// import DatePicker, {
-//   Calendar,
-//   getAllDatesInRange,
-// } from "react-multi-date-picker";
-
-// const EventDatePicker = () => {
-//   const dispatch = useDispatch();
-//   let [value, setValue] = useState([]);
-//   const [selectedDays, setSelectedDays] = useState([]);
-//   const [selectedOption, setSelectedOption] = useState("specific Dates");
-
-//   const handleEventDays = (eventName) => {
-//     dispatch(updateEventDetail({ key: "specificDays", value: selectedDays }));
-//   };
-
-//   const handleSelectDay = (day) => {
-//     if (selectedDays.includes(day)) {
-//       setSelectedDays(
-//         selectedDays.filter((selectedDay) => selectedDay !== day)
-//       );
-//     } else {
-//       setSelectedDays([...selectedDays, day]);
-//     }
-//   };
-
-//   return (
-//     <div className="flex flex-col gap-10">
-//       <div className="p-9  rounded-3xl  bg-blackD  flex flex-col gap-6  ">
-//         <div className="flex  flex-col gap-5">
-//           <h3 className="text-2xl text-white font-bold">
-//             {" "}
-//             What <span className="text-greenF">Dates</span> Might work?
-//           </h3>
-//           <p className="text-white text-[16px]">
-//             Click and drag dates to choose possibilities. Click and drag labels
-//             to shift the calendar.
-//           </p>
-
-//           <div className="flex flex-col lg:flex-row lg:items-center gap-y-3">
-//             <div className="text-white text-[12px] w-full lg:w-[17%]">
-//               Survey Using
-//             </div>
-
-//             <select
-//               value={selectedOption}
-//               onChange={(e) => setSelectedOption(e.currentTarget.value)}
-//               className="w-full px-[24px] py-[12px] bg-gray-900 text-white rounded-[12px] border-none appearance-none focus:outline-none"
-//             >
-//               <option value={"specific Dates"}>Specific Dates</option>
-//               <option value={"Week Days"}>Week Days</option>
-//             </select>
-//           </div>
-
-//           {selectedOption === "specific Dates" ? (
-//             <div>
-//               <Calendar
-//                 multiple
-//                 onlyShowInRangeDates
-//                 value={value}
-//                 onChange={handleEventDays}
-//               />
-//             </div>
-//           ) : (
-// <div className="flex flex-col gap-2">
-//   {weekdays.map((day, index) => (
-//     <div
-//       key={index}
-//       className={`h-[40px] flex items-center justify-center rounded-lg border ${
-//         selectedDays.includes(day)
-//           ? "bg-greenF text-blackOA"
-//           : "bg-gray-300"
-//       }`}
-//       onClick={() => handleSelectDay(day)}
-//     >
-//       {day}
-//     </div>
-//   ))}
-// </div>
-//           )}
-//         </div>
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default EventDatePicker;
-
+"use client";
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import { updateEventDetail } from "@/lib/feature/EventSlice";
@@ -110,16 +20,6 @@ const EventDatePicker = () => {
       setSelectedDates([]);
     }
   };
-  //   const handleDatesChange = (newDates) => {
-  //     setSelectedDates(newDates);
-
-  //     console.log(newDates);
-  //     dispatch(updateEventDetail({ key: "specificDays", value: newDates }));
-  //   };
-
-  //   const handleDatesChange = (newDates) => {
-  //     setSelectedDates(newDates);
-  //   };
 
   const handleDatesChange = (newDates) => {
     const formattedDates = newDates.map((date) => {
@@ -151,16 +51,15 @@ const EventDatePicker = () => {
   ];
 
   const handleSelectDayOfWeek = (day) => {
-    const newSelectedDays = selectedDaysOfWeek.includes(day)
-      ? selectedDaysOfWeek.filter((selectedDay) => selectedDay !== day)
-      : [...selectedDaysOfWeek, day];
+    setSelectedDays((prevSelectedDays) => {
+      if (prevSelectedDays.includes(day)) {
+        return prevSelectedDays.filter((selectedDay) => selectedDay !== day);
+      } else {
+        return [...prevSelectedDays, day];
+      }
+    });
 
-    setSelectedDaysOfWeek(newSelectedDays);
-    dispatch(
-      updateEventDetail({ key: "specificDays", value: newSelectedDays })
-    );
-
-    setSelectedDaysOfWeek();
+    dispatch(updateEventDetail({ key: "specificDays", value: selectedDays })); // Assuming you have an action creator named updateSelectedDays
   };
 
   return (
@@ -203,10 +102,22 @@ const EventDatePicker = () => {
           ) : (
             <div className="flex flex-col gap-2">
               {weekdays.map((day, index) => (
+                // <div
+                //   key={index}
+                //   className={`h-[40px] flex items-center justify-center rounded-lg border ${
+                //     selectedDays?.includes(day)
+                //       ? "bg-greenF text-blackOA"
+                //       : "bg-gray-300"
+                //   }`}
+                //   onClick={() => handleSelectDayOfWeek(day)}
+                // >
+                //   {day}
+                // </div>
+
                 <div
                   key={index}
                   className={`h-[40px] flex items-center justify-center rounded-lg border ${
-                    selectedDaysOfWeek.includes(day)
+                    selectedDays.includes(day)
                       ? "bg-greenF text-blackOA"
                       : "bg-gray-300"
                   }`}
