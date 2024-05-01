@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "export": "npm run build && next export"
   },
   "dependencies": {
     "@reduxjs/toolkit": "^2.2.3",
@@ -20,6 +21,7 @@
     "react-time-picker": "^6.6.0",
     "react-timezone-select": "^3.2.3",
     "redux-persist": "^6.0.0",
+    "sharp": "^0.33.3",
     "tailwind-datepicker-react": "^1.4.3",
     "uuid": "^9.0.1"
   },
