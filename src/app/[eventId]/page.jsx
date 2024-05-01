@@ -7,7 +7,7 @@ const timezones = {
   "Europe/Berlin": "Frankfurt",
 };
 
-const page = ({ params }) => {
+const Page = ({ params }) => {
   const { options, parseTimezone } = useTimezoneSelect({
     labelStyle,
     timezones,
@@ -95,4 +95,4 @@ const page = ({ params }) => {
   );
 };
 
-export default page;
+export default Page;
