@@ -8,10 +8,10 @@ const timezones = {
 };
 
 const page = ({ params }) => {
-  const { options, parseTimezone } = useTimezoneSelect({
-    labelStyle,
-    timezones,
-  });
+  //   const { options, parseTimezone } = useTimezoneSelect({
+  //     labelStyle,
+  //     timezones,
+  //   });
   return (
     <div className="flex flex-col gap-4 w-full">
       <div className="bg-blackE w-full  flex justify-center ">
