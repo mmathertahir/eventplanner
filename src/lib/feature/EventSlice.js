@@ -60,6 +60,7 @@ const createEvent = async (eventData) => {
   try {
     await setDoc(doc(db, "events", eventData.id), eventData); // Use the generated UUID as the document ID
     alert("Event created successfully!");
+    setEventData(initialState);
   } catch (err) {
     console.error("Error creating event:", err);
   }

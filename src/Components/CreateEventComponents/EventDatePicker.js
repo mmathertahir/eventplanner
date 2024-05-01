@@ -136,6 +136,8 @@ const EventDatePicker = () => {
     dispatch(
       updateEventDetail({ key: "specificDates", value: formattedDates })
     );
+
+    setSelectedDates();
   };
 
   const weekdays = [
@@ -157,6 +159,8 @@ const EventDatePicker = () => {
     dispatch(
       updateEventDetail({ key: "specificDays", value: newSelectedDays })
     );
+
+    setSelectedDaysOfWeek();
   };
 
   return (
