@@ -53,7 +53,7 @@ const Page = ({ params }) => {
   return (
     <div className="flex flex-col gap-4 w-full pb-10">
       <div className="bg-blackE w-full  flex justify-center ">
-        <div className=" px-20  py-9">
+        <div className=" px-5  md:px-20  py-9">
           <div className="flex flex-col lg:flex-row gap-3">
             <div className="flex flex-col gap-4 w-full  lg:w-3/4">
               <div className="text-white font-bold text-[24px]">
@@ -88,9 +88,9 @@ const Page = ({ params }) => {
         </div>
       </div>
 
-      <div className="px-20  py-10  flex flex-col gap-3 lg:flex-row">
+      <div className="px-5 md:px-20  py-10  flex flex-col gap-3 lg:flex-row">
         <div
-          className={`p-9  rounded-3xl  bg-black  w-full lg:w-6/12  flex flex-col gap-6  ${
+          className={`p-4 md:p-9  rounded-3xl  bg-black  w-full lg:w-6/12  flex flex-col gap-6  ${
             activeItem ? "hidden" : "block"
           }`}
         >
