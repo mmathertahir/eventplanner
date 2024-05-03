@@ -3,13 +3,19 @@ import {
   setDoc,
   doc,
   getDocs,
+  getDoc,
+  updateDoc,
   collection,
   query,
   where,
+  arrayUnion,
+  documents,
+  push,
 } from "firebase/firestore";
 import { db } from "@/app/firebaseConfig";
 
 import { v4 as uuidv4 } from "uuid"; // Import the v4 function from the uuid library
+import { useDispatch } from "react-redux";
 
 const initialState = {
   id: "",
@@ -20,7 +26,7 @@ const initialState = {
   initialTime: "",
   finishTime: "",
   hours: [],
-  particepents: [],
+  participants: [],
   isSuccess: false,
 };
 
@@ -49,18 +55,17 @@ const eventSlice = createSlice({
         state.isSuccess = true;
       }
     },
-    getEventData(state, action) {
-      let data = getDocsbyID(action.payload);
-      // state.id = data.id;
-      // state.eventName = data.eventName;
-      // state.timeZone = data.timeZone;
-      // state.specificDates = data.specificDates;
-      // state.specificDays = data.specificDays;
-      // state.initialTime = data.initialTime;
-      // state.finishTime = data.finishTime;
-      // state.hours = data.hours;
-      // state.particepents = data.particepents;
-      // state.isSuccess = data.isSuccess;
+
+    setEventData(state, action) {
+      return {
+        ...state,
+        ...action.payload,
+      };
+    },
+
+    updateParticipants(state, action) {
+      state.participants.push(action.payload);
+      // Push new participant to participants array
     },
   },
 });
@@ -115,23 +120,7 @@ let createEvent = async (eventData) => {
   }
 };
 
-// let getEventById = async (eventId) => {
-//   console.log(eventId);
-//   try {
-//     let newdata = await getDocs(collection(db, "events"));
-
-//     console.log(newdata.docs., "awais");
-//     if (!doc.exists) {
-//       throw new Error("No such document!");
-//     }
-//     console.log(doc.data(), "awais");
-//     return doc.data();
-//   } catch (error) {
-//     return rejectWithValue(error.message);
-//   }
-// };
-
-const getDocsbyID = async (eventID) => {
+export const getDocsbyID = async (eventID) => {
   console.log(eventID, "Mather");
   try {
     console.log(eventID, "Mather in Docs");
@@ -145,34 +134,54 @@ const getDocsbyID = async (eventID) => {
       });
     });
 
-    documents = doc[0];
-    console.log(documents, "Documents Comming");
-    return documents;
+    const eventData = documents[0].data;
+
+    return eventData;
   } catch (error) {
     console.error("Error fetching documents: ", error);
   }
 };
 
-let getEventById = async (eventId) => {
-  console.log(eventId, "Mather");
+export const handlememberUpdate = async (eventId, participant) => {
   try {
-    const querySnapshot = await getDocs(
-      query(collection(db, "events"), where("id", "==", eventId))
-    );
+    // Fetch the todo with the specific event ID
+    const eventRef = doc(db, "events", eventId);
+    const eventSnap = await getDoc(eventRef);
+    if (!eventSnap.exists()) {
+      alert("Event not found", "error");
 
-    if (querySnapshot.empty) {
-      throw new Error("No such document!");
+      return;
     }
 
-    const eventData = querySnapshot.docs[0].data();
-    return eventData;
-  } catch (error) {
-    console.error("Error getting event by ID:", error);
-    throw error;
+    const member = eventSnap.data();
+    if (member.participants) {
+      for (let i = 0; i < member.participants.length; i++) {
+        const participantObject = member.participants[i];
+        if (participantObject.userName === participant.userName) {
+          alert("Participant already exists ", "warning");
+          return participant;
+        }
+      }
+    }
+
+    member.participants = member.participants || []; // Ensure participants is initialized as an array
+    member.participants.push(participant);
+
+    await setDoc(eventRef, member, { merge: true });
+    alert("Event is Updated Successfully", "success");
+    return participant;
+  } catch (err) {
+    console.error(err);
+    alert("Something went wrong", "error");
   }
 };
 
-export const { updateEventDetail, logEventData, getEventData } =
-  eventSlice.actions;
+export const {
+  updateEventDetail,
+  logEventData,
+  getEventData,
+  setEventData,
+  updateParticipants,
+} = eventSlice.actions;
 
 export default eventSlice.reducer;

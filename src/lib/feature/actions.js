@@ -77,6 +77,41 @@ export const logEventData = createAsyncThunk(
   }
 );
 
+export const getDayOfWeek = (specificDates) => {
+  return specificDates.map((dateString) => {
+    const [day, month, year] = dateString.split("/");
+    const formattedDate = `20${year}-${month}-${day}`;
+    console.log("Formatted Date:", formattedDate);
+
+    const date = new Date(formattedDate);
+    console.log("Parsed Date:", date);
+
+    if (isNaN(date.getTime())) {
+      console.error("Invalid Date:", dateString);
+      return "Invalid Date";
+    }
+
+    const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+    const months = [
+      "Jan",
+      "Feb",
+      "Mar",
+      "Apr",
+      "May",
+      "Jun",
+      "Jul",
+      "Aug",
+      "Sep",
+      "Oct",
+      "Nov",
+      "Dec",
+    ];
+    return `${months[date.getMonth()]} ${date.getDate()} ${
+      days[date.getDay()]
+    }`;
+  });
+};
+
 function calculateHoursArrayWithAMPM(initialTime, finishTime) {
   const initialHour = parseInt(initialTime.split(":")[0], 10);
   const initialMinute = parseInt(initialTime.split(":")[1], 10);
