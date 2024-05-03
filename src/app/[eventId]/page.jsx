@@ -1,5 +1,8 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { getEventData } from "@/lib/feature/EventSlice";
+
+import { useDispatch, useSelector } from "react-redux";
 
 import { useTimezoneSelect, allTimezones } from "react-timezone-select";
 const labelStyle = "original";
@@ -9,6 +12,8 @@ const timezones = {
 };
 
 const Page = ({ params }) => {
+  const dispatch = useDispatch();
+  const [eventDetails, setEventDetails] = useState();
   const { options, parseTimezone } = useTimezoneSelect({
     labelStyle,
     timezones,
@@ -50,14 +55,24 @@ const Page = ({ params }) => {
     }
   };
 
+  console.log(params.eventId, "Current Param Id");
+
+  useEffect(() => {
+    dispatch(getEventData(params.eventId));
+  }, []);
+
+  let eventData = useSelector((state) => state.eventdetail);
+
+  console.log(eventData, "CurrentEventData");
   return (
-    <div className="flex flex-col gap-4 w-full pb-10">
+    <div className="flex flex-col gap-4 w-full ">
       <div className="bg-blackE w-full  flex justify-center ">
-        <div className=" px-5  md:px-20  py-9">
+        <div className=" px-5  md:px-20  py-9 ">
           <div className="flex flex-col lg:flex-row gap-3">
             <div className="flex flex-col gap-4 w-full  lg:w-3/4">
               <div className="text-white font-bold text-[24px]">
-                My Event Name
+                {/* {eventDetails.eventName} */}
+                Football
               </div>
 
               <p className="font-normal text-white ">
@@ -88,7 +103,7 @@ const Page = ({ params }) => {
         </div>
       </div>
 
-      <div className="px-5 md:px-20  py-10  flex flex-col gap-3 lg:flex-row">
+      <div className="px-5 md:px-20  py-9   flex flex-col gap-3 lg:flex-row">
         <div
           className={`p-4 md:p-9  rounded-3xl  bg-black  w-full lg:w-6/12  flex flex-col gap-6  ${
             activeItem ? "hidden" : "block"
@@ -149,7 +164,7 @@ const Page = ({ params }) => {
         </div>
 
         <div
-          className={`w-full   lg:w-6/12  flex flex-col   gap-6  ${
+          className={`w-full   lg:w-6/12  flex flex-col   gap-6 bg-blackE  p-11 ${
             activeItem ? "block" : "hidden"
           } `}
         >
@@ -180,7 +195,7 @@ const Page = ({ params }) => {
           </div>
 
           <div className="overflow-x-auto">
-            <table className="table-auto border-collapse w-full">
+            <table className="table-auto border-collapse  w-full">
               <thead>
                 <tr>
                   <th className=""></th>
@@ -207,7 +222,9 @@ const Page = ({ params }) => {
                             ? "#14FF00"
                             : "black",
                         }}
-                      ></td>
+                      >
+                        <div class="   border-y  w-full border-dotted  "></div>
+                      </td>
                     ))}
                   </tr>
                 ))}
@@ -216,7 +233,7 @@ const Page = ({ params }) => {
           </div>
         </div>
 
-        <div className="w-full   lg:w-6/12  flex flex-col   gap-6">
+        <div className="w-full   lg:w-6/12  flex flex-col   gap-6 p-11">
           <div className="flex flex-col gap-3">
             <div className="flex flex-col items-center justify-center gap-3">
               <div className="text-white font-bold text-[24px]">
@@ -244,7 +261,7 @@ const Page = ({ params }) => {
           </div>
 
           <div className="overflow-x-auto">
-            <table className="table-auto border-collapse w-full">
+            <table className="table-auto border-collapse   w-full ">
               <thead>
                 <tr>
                   <th className=""></th>
@@ -261,23 +278,11 @@ const Page = ({ params }) => {
                     <td className=" px-3 text-end  py-2 text-white">
                       {timeslot}
                     </td>
-                    {/* {weekdays.map((weekday) => (
-                      <td
-                        key={`${timeslot}-${weekday}`}
-                        className="border bg-gray-900  px-3 py-1 cursor-pointer  "
-                        onClick={() => toggleAvailability(timeslot, weekday)}
-                        style={{
-                          backgroundColor: availability[timeslot]?.[weekday]
-                            ? "#14FF00"
-                            : "black",
-                        }}
-                      ></td>
-                    ))} */}
 
                     {weekdays.map((weekday) => (
                       <td
                         key={`${timeslot}-${weekday}`}
-                        className={`border bg-gray-900 py-2 cursor-pointer ${
+                        className={`border bg-gray-900 py-2 cursor-pointer  relative  ${
                           !activeItem ? "disabled" : ""
                         }`}
                         onClick={() => {
@@ -290,7 +295,9 @@ const Page = ({ params }) => {
                             ? "#14FF00"
                             : "black",
                         }}
-                      ></td>
+                      >
+                        <div class="   border-y  w-full border-dotted "></div>
+                      </td>
                     ))}
                   </tr>
                 ))}

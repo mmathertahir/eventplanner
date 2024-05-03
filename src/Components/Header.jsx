@@ -9,7 +9,7 @@ const Header = () => {
       <nav class="bg-blackD  px-20  py-6  ">
         <div class="flex flex-col  conatiner gap-4   md:gap-0 md:flex-row  justify-between items-center ">
           <Link href="/" class="flex items-center">
-            <Image src={logo} />
+            <Image src={logo} alt="" />
           </Link>
 
           <div className="flex flex-col  gap-4   md:flex-row items-center  gap-x-[60px] ">
