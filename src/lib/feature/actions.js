@@ -42,57 +42,26 @@ export const toggleAvailability = async (
   setUserData
 ) => {
   let timeslot2 = [timeslot];
-  weekday = convertDateFormat(weekday);
+  // weekday = convertDateFormat(weekday);
 
+  // Prepared data for user availability from first slot to last slot
   await setUserData((prevUserData) => {
-
-
-let prevdata=Object.values(prevUserData.availability[weekday]);
+    // if availability.weekday is undefined then include only timeslot
+    // otherwise add prev slots and new slot
     const newAvailability = {
-      //       ...prevUserData.availability,
-      //       [weekday]: {
-      //         ...(prevUserData.availability[weekday] || {}),
-      // [timeslot]:!prevUserData.availability[weekday]?.[timeslot]
-
-      //       },
-
-      ...prevUserData.availability,
-      [weekday]: [
-
-        prevdata?{...prevdata,...timeslot2}:{...timeslot2}
-        
-      ],
+      ...prevUserData?.availability,
+      [weekday]: prevUserData?.availability?.[weekday]
+        ? [...prevUserData.availability[weekday], timeslot]
+        : [timeslot],
     };
+    console.log("preapred data pev data availability weekday", newAvailability);
+
     return {
       ...prevUserData,
-
       availability: newAvailability,
     };
   });
 };
-
-// export const toggleAvailability = async (
-//   timeslot,
-//   weekday,
-//   userData,
-//   setUserData
-// ) => {
-//   weekday = convertDateFormat(weekday);
-
-//   await setUserData((prevUserData) => {
-//     const newAvailability = {
-//       ...prevUserData.availability,
-//       [weekday]: {
-//         ...(prevUserData?.availability[weekday] || {}),
-//         [timeslot]: !prevUserData.availability[weekday]?.[timeslot],
-//       },
-//     };
-//     return {
-//       ...prevUserData,
-//       availability: newAvailability,
-//     };
-//   });
-// };
 
 export const logEventData = createAsyncThunk(
   "event/logEventData",
@@ -234,7 +203,6 @@ export function convertDateFormat(dateString) {
 // Example usage:
 const originalDate = "May 14 Tue 2024";
 const convertedDate = convertDateFormat(originalDate);
-console.log(convertedDate); // Output: 14/5/24
 
 export const getAllEvents = async (setAllEvent) => {
   try {
@@ -249,4 +217,11 @@ export const getAllEvents = async (setAllEvent) => {
   } catch (error) {
     console.error("Error getting all events: ", error);
   }
+};
+
+export const getCurrentEventData = async (eventids) => {
+  console.log(eventids, userName, "ffffff");
+  const d = await getDoc(doc(db, "events", eventids));
+
+  console.log(d.data());
 };

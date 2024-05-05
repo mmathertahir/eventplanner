@@ -12,6 +12,8 @@ import {
   getDayOfWeek,
   toggleAvailability,
   getAllEvents,
+  getCurrentUserData,
+  getCurrentEventData,
 } from "@/lib/feature/actions";
 import { getDocsbyID } from "@/lib/feature/EventSlice";
 import { v4 as uuidv4 } from "uuid";
@@ -67,7 +69,6 @@ const Page = ({ params }) => {
       eventId: params.eventId,
     };
 
- 
     const { userName, userId, eventId, usertimezone } = updatedUserData;
 
     if (!userName || !userId || !eventId || !usertimezone) {
@@ -77,11 +78,12 @@ const Page = ({ params }) => {
       return;
     }
 
-
     let commingData = await handlememberUpdate(eventId, updatedUserData);
     setUserData(commingData);
     setActiveItems(true);
+    getAllEvents(setAllEvent);
 
+    dispatch(setEventData(allEvent));
   };
 
   useEffect(() => {
@@ -112,22 +114,15 @@ const Page = ({ params }) => {
 
     dispatch(setEventData(allEvent));
   }, [userData.availability]);
-
-
-
+  let CurrentAvvail;
   useEffect(() => {
-    let CurrentAvvail = getUserAvailabilityByUsername(
-      eventData,
-      userData.userName
-    );
-
-
+    CurrentAvvail = getUserAvailabilityByUsername(eventData, userData.userName);
+    console.log(CurrentAvvail, "awais");
   }, [eventData]);
 
   const getUserAvailabilityByUsername = (eventData, userName) => {
     // Check if eventData and participants exist
     if (!eventData || !eventData.participants) {
-
       return null;
     }
 
@@ -139,12 +134,10 @@ const Page = ({ params }) => {
       if (participants.hasOwnProperty(participantKey)) {
         const participant = participants[participantKey];
         if (participant.userName === userName) {
-
           return participant.availability;
         }
       }
     }
-
 
     return null;
   };
@@ -153,26 +146,15 @@ const Page = ({ params }) => {
     getAllEvents(setAllEvent);
 
     dispatch(setEventData(allEvent));
-  }, []);
+  }, [userData.availability]);
 
   // useEffect(() => {
-  //   const fetchAvailabilityData = async () => {
-  //     // Fetch availability data from the database
+  //   getCurrentEventData(params.eventId);
+  // }, []);
 
-  //     // Update userData with the fetched availability data
-  //     setUserData((prevUserData) => ({
-  //       ...prevUserData,
-  //       availability: getUserAvailabilityByUsername(
-  //         prevUserData,
-  //         prevUserData.userName
-  //       ),
-  //     }));
-  //   };
+  console.log(eventData, "Redux Store Data");
 
-  //   // Call fetchAvailabilityData function
-  //   fetchAvailabilityData();
-  // }, [userData.userName]);
-
+  console.log(allEvent, "Current Event data");
   return (
     <div className="flex flex-col gap-4 w-full ">
       {isLoading ? (
@@ -352,9 +334,7 @@ const Page = ({ params }) => {
                               )
                             }
                             style={{
-                              backgroundColor: userData?.availability?.[
-                                convertDateFormat(weekday)
-                              ]?.[timeslot]
+                              backgroundColor: userData?.availability?.[weekday]
                                 ? "#14FF00" // If user is available at this timeslot on this weekday
                                 : "black", // If user is not available
                             }}
@@ -423,7 +403,7 @@ const Page = ({ params }) => {
                             }`}
                             style={{
                               backgroundColor: userData?.availability?.[
-                                convertDateFormat(weekday)
+                                weekday
                               ]?.[timeslot]
                                 ? "#14FF00" // If user is available at this timeslot on this weekday
                                 : "black", // If user is not available
