@@ -1,4 +1,4 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { createSlice, createAsyncThunk, current } from "@reduxjs/toolkit";
 import {
   setDoc,
   doc,
@@ -26,7 +26,7 @@ const initialState = {
   initialTime: "",
   finishTime: "",
   hours: [],
-  participants: [],
+  participants: {},
   isSuccess: false,
 };
 
@@ -65,7 +65,6 @@ const eventSlice = createSlice({
 
     updateParticipants(state, action) {
       state.participants.push(action.payload);
-      // Push new participant to participants array
     },
   },
 });
@@ -144,7 +143,6 @@ export const getDocsbyID = async (eventID) => {
 
 export const handlememberUpdate = async (eventId, participant) => {
   try {
-    // Fetch the todo with the specific event ID
     const eventRef = doc(db, "events", eventId);
     const eventSnap = await getDoc(eventRef);
     if (!eventSnap.exists()) {
@@ -154,18 +152,15 @@ export const handlememberUpdate = async (eventId, participant) => {
     }
 
     const member = eventSnap.data();
+
     if (member.participants) {
-      for (let i = 0; i < member.participants.length; i++) {
-        const participantObject = member.participants[i];
-        if (participantObject.userName === participant.userName) {
-          alert("Participant already exists ", "warning");
-          return participant;
-        }
+      if (member.participants[participant.userName]) {
+        alert("Participant already exists ", "warning");
+        return participant;
       }
     }
-
-    member.participants = member.participants || []; // Ensure participants is initialized as an array
-    member.participants.push(participant);
+    member.participants = member.participants || {};
+    member.participants[participant.userName] = participant;
 
     await setDoc(eventRef, member, { merge: true });
     alert("Event is Updated Successfully", "success");
@@ -173,6 +168,90 @@ export const handlememberUpdate = async (eventId, participant) => {
   } catch (err) {
     console.error(err);
     alert("Something went wrong", "error");
+  }
+};
+
+export const handleAvailabilityUpdate = async (eventId, participant) => {
+  console.log("current Comming Data", participant);
+
+  try {
+    const eventRef = doc(db, "events", eventId);
+    const eventSnap = await getDoc(eventRef);
+    if (!eventSnap.exists()) {
+      alert("Event not found", "error");
+      return;
+    }
+
+    const member = eventSnap.data();
+    if (member.participants) {
+      for (let i = 0; i < member.participants.length; i++) {
+        const participantObject = member.participants[i];
+        if (participantObject.userName === participant.userName) {
+          // Participant already exists, update availability
+          if (!participantObject.availability) {
+            participantObject.availability = []; // Ensure availability array is initialized
+          }
+          console.log(participant, "Availability in function");
+          participantObject.availability.push(participant.availability);
+
+          await setDoc(eventRef, member); // Save the updated member object
+          alert("Participant's availability updated successfully", "success");
+          return participant;
+        }
+      }
+    }
+
+    member.participants = member.participants || {};
+    member.participants[participant.userName] = participant;
+    await setDoc(eventRef, member, { merge: true });
+    alert("Participant added successfully", "success");
+    return participant;
+  } catch (err) {
+    console.error(err);
+    alert("Something went wrong", "error");
+  }
+};
+
+
+export const getParticipantByUsername = async (
+  eventId,
+  userName,
+  setFilteredParticipant
+) => {
+  try {
+    const docRef = doc(db, "events", eventId);
+    const docSnap = await getDoc(docRef);
+
+    if (docSnap.exists()) {
+      const eventData = docSnap.data();
+      console.log("Event data:", eventData);
+
+      // Check if the participants object exists
+      if (eventData.participants) {
+        const participants = eventData.participants;
+
+        // Iterate over the participants object to find the participant by username
+        for (const participantKey in participants) {
+          if (participants.hasOwnProperty(participantKey)) {
+            const participant = participants[participantKey];
+            if (participant.userName === userName) {
+              console.log("Participant found:", participant);
+              setFilteredParticipant({ eventId: docSnap.id, participant });
+              return; // Exit the loop once participant is found
+            }
+          }
+        }
+      }
+
+      console.log("No participant found with username:", userName);
+      setParticipant(null);
+    } else {
+      console.log("No event found for the specified ID:", eventId);
+      setParticipant(null);
+    }
+  } catch (error) {
+    console.error("Error getting participant by username:", error);
+    setParticipant(null);
   }
 };
 

@@ -1,11 +1,20 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { getEventData, setEventData } from "@/lib/feature/EventSlice";
-import { getDayOfWeek } from "@/lib/feature/actions";
+import {
+  getEventData,
+  setEventData,
+  handleAvailabilityUpdate,
+  handlememberUpdate,
+} from "@/lib/feature/EventSlice";
+
+import {
+  convertDateFormat,
+  getDayOfWeek,
+  toggleAvailability,
+  getAllEvents,
+} from "@/lib/feature/actions";
 import { getDocsbyID } from "@/lib/feature/EventSlice";
 import { v4 as uuidv4 } from "uuid";
-
-import { handlememberUpdate } from "@/lib/feature/EventSlice";
 
 import { useDispatch, useSelector } from "react-redux";
 
@@ -19,6 +28,8 @@ const timezones = {
 
 const Page = ({ params }) => {
   const dispatch = useDispatch();
+  const [filteredParticipant, setFilteredParticipant] = useState(null);
+
   const [userData, setUserData] = useState({
     userName: "",
     userId: "",
@@ -28,30 +39,15 @@ const Page = ({ params }) => {
     usertimezone: "",
   });
 
-  const [eventDetails, setEventDetails] = useState();
   const [isLoading, setIsLoading] = useState(false);
+  const [allEvent, setAllEvent] = useState();
   const { options, parseTimezone } = useTimezoneSelect({
     labelStyle,
     timezones,
   });
 
-  const [availability, setAvailability] = useState({});
   const [activeItem, setActiveItems] = useState(false);
   const [currentDate, setCurrentDate] = useState();
-  const [userName, setUserName] = useState("");
-
-  const toggleAvailability = (timeslot, weekday) => {
-    setAvailability((prevAvailability) => ({
-      ...prevAvailability,
-      [timeslot]: {
-        ...prevAvailability[timeslot],
-        [weekday]: !prevAvailability[timeslot]?.[weekday],
-      },
-    }));
-  };
-
-  console.log(params.eventId, "Current Param Id");
-
   const handleChange = (event) => {
     const { name, value } = event.target;
     setUserData((prevState) => ({
@@ -71,7 +67,7 @@ const Page = ({ params }) => {
       eventId: params.eventId,
     };
 
-    console.log(uId, "Current User Id");
+ 
     const { userName, userId, eventId, usertimezone } = updatedUserData;
 
     if (!userName || !userId || !eventId || !usertimezone) {
@@ -81,11 +77,11 @@ const Page = ({ params }) => {
       return;
     }
 
-    console.log(userData, "Event ID ");
+
     let commingData = await handlememberUpdate(eventId, updatedUserData);
     setUserData(commingData);
     setActiveItems(true);
-    console.log(commingData, "Data on AddedUser");
+
   };
 
   useEffect(() => {
@@ -98,7 +94,6 @@ const Page = ({ params }) => {
 
     fetchData();
   }, [dispatch]);
-
   let eventData = useSelector((state) => state.eventdetail);
 
   useEffect(() => {
@@ -107,6 +102,76 @@ const Page = ({ params }) => {
       setCurrentDate(dates);
     }
   }, [eventData]);
+
+  useEffect(() => {
+    if (userData && userData.availability) {
+      handleAvailabilityUpdate(params.eventId, userData);
+    }
+
+    getAllEvents(setAllEvent);
+
+    dispatch(setEventData(allEvent));
+  }, [userData.availability]);
+
+
+
+  useEffect(() => {
+    let CurrentAvvail = getUserAvailabilityByUsername(
+      eventData,
+      userData.userName
+    );
+
+
+  }, [eventData]);
+
+  const getUserAvailabilityByUsername = (eventData, userName) => {
+    // Check if eventData and participants exist
+    if (!eventData || !eventData.participants) {
+
+      return null;
+    }
+
+    // Retrieve the participants object from the event data
+    const participants = eventData.participants;
+
+    // Iterate over the participants to find the user's availability by username
+    for (const participantKey in participants) {
+      if (participants.hasOwnProperty(participantKey)) {
+        const participant = participants[participantKey];
+        if (participant.userName === userName) {
+
+          return participant.availability;
+        }
+      }
+    }
+
+
+    return null;
+  };
+
+  useEffect(() => {
+    getAllEvents(setAllEvent);
+
+    dispatch(setEventData(allEvent));
+  }, []);
+
+  // useEffect(() => {
+  //   const fetchAvailabilityData = async () => {
+  //     // Fetch availability data from the database
+
+  //     // Update userData with the fetched availability data
+  //     setUserData((prevUserData) => ({
+  //       ...prevUserData,
+  //       availability: getUserAvailabilityByUsername(
+  //         prevUserData,
+  //         prevUserData.userName
+  //       ),
+  //     }));
+  //   };
+
+  //   // Call fetchAvailabilityData function
+  //   fetchAvailabilityData();
+  // }, [userData.userName]);
 
   return (
     <div className="flex flex-col gap-4 w-full ">
@@ -143,7 +208,7 @@ const Page = ({ params }) => {
                       Your Time Zone
                     </div>
                     <select
-                      value={userData.usertimezone}
+                      value={userData?.usertimezone}
                       onChange={handleChange}
                       name="usertimezone"
                       className="w-full px-[24px] py-[12px] bg-gray-900 text-white rounded-[12px] border-none appearance-none focus:outline-none"
@@ -178,7 +243,7 @@ const Page = ({ params }) => {
                   <input
                     className="w-full px-[24px] py-[12px]  bg-gray-900  text-white  rounded-[12px] border-none appearance-none focus:outline-none "
                     placeholder="Enter Event Name"
-                    value={userData.userName}
+                    value={userData?.userName}
                     name="userName"
                     onChange={handleChange}
                   ></input>
@@ -192,7 +257,7 @@ const Page = ({ params }) => {
                   <input
                     className="w-full px-[24px] py-[12px]  bg-gray-900  text-white  rounded-[12px] border-none appearance-none focus:outline-none "
                     placeholder="Enter Event Name"
-                    value={userData.password}
+                    value={userData?.password}
                     name="password"
                     onChange={handleChange}
                   ></input>
@@ -231,7 +296,7 @@ const Page = ({ params }) => {
               <div className="flex flex-col gap-3">
                 <div className="flex flex-col items-center justify-center gap-3">
                   <div className="text-white font-bold text-[24px]">
-                    {userData.userName}
+                    {userData?.userName}
                   </div>
 
                   <p className="font-normal text-white">
@@ -275,14 +340,23 @@ const Page = ({ params }) => {
                         {currentDate?.map((weekday) => (
                           <td
                             key={`${timeslot}-${weekday}`}
+                            name="availability"
+                            value={userData.availability}
                             className="border bg-gray-900   py-2 cursor-pointer  "
                             onClick={() =>
-                              toggleAvailability(timeslot, weekday)
+                              toggleAvailability(
+                                timeslot,
+                                weekday,
+                                userData,
+                                setUserData
+                              )
                             }
                             style={{
-                              backgroundColor: availability[timeslot]?.[weekday]
-                                ? "#14FF00"
-                                : "black",
+                              backgroundColor: userData?.availability?.[
+                                convertDateFormat(weekday)
+                              ]?.[timeslot]
+                                ? "#14FF00" // If user is available at this timeslot on this weekday
+                                : "black", // If user is not available
                             }}
                           >
                             <div class="   border-y  w-full border-dotted  "></div>
@@ -347,15 +421,12 @@ const Page = ({ params }) => {
                             className={`border bg-gray-900 py-2 cursor-pointer  relative  ${
                               !activeItem ? "disabled" : ""
                             }`}
-                            onClick={() => {
-                              if (activeItem) {
-                                toggleAvailability(timeslot, weekday);
-                              }
-                            }}
                             style={{
-                              backgroundColor: availability[timeslot]?.[weekday]
-                                ? "#14FF00"
-                                : "black",
+                              backgroundColor: userData?.availability?.[
+                                convertDateFormat(weekday)
+                              ]?.[timeslot]
+                                ? "#14FF00" // If user is available at this timeslot on this weekday
+                                : "black", // If user is not available
                             }}
                           >
                             <div class="   border-y  w-full border-dotted "></div>
