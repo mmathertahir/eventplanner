@@ -39,7 +39,6 @@ const eventSlice = createSlice({
       state[key] = value;
     },
     logEventData(state) {
-      console.log(state, "State in Redux");
       const initialTime = state.initialTime;
       const finishTime = state.finishTime;
       const hoursDifference = calculateHoursArrayWithAMPM(
@@ -120,7 +119,6 @@ let createEvent = async (eventData) => {
 };
 
 export const getDocsbyID = async (eventID) => {
-  console.log(eventID, "Mather");
   try {
     console.log(eventID, "Mather in Docs");
     const q = query(collection(db, "events"), where("id", "==", eventID));
@@ -172,8 +170,6 @@ export const handlememberUpdate = async (eventId, participant) => {
 };
 
 export const handleAvailabilityUpdate = async (eventId, participant) => {
-  console.log("current Comming Data", participant);
-
   try {
     const eventRef = doc(db, "events", eventId);
     const eventSnap = await getDoc(eventRef);
@@ -187,15 +183,13 @@ export const handleAvailabilityUpdate = async (eventId, participant) => {
       for (let i = 0; i < member.participants.length; i++) {
         const participantObject = member.participants[i];
         if (participantObject.userName === participant.userName) {
-          // Participant already exists, update availability
           if (!participantObject.availability) {
             participantObject.availability = []; // Ensure availability array is initialized
           }
-          console.log(participant, "Availability in function");
+
           participantObject.availability.push(participant.availability);
 
           await setDoc(eventRef, member); // Save the updated member object
-          alert("Participant's availability updated successfully", "success");
           return participant;
         }
       }
@@ -204,14 +198,11 @@ export const handleAvailabilityUpdate = async (eventId, participant) => {
     member.participants = member.participants || {};
     member.participants[participant.userName] = participant;
     await setDoc(eventRef, member, { merge: true });
-    alert("Participant added successfully", "success");
     return participant;
   } catch (err) {
     console.error(err);
-    alert("Something went wrong", "error");
   }
 };
-
 
 export const getParticipantByUsername = async (
   eventId,
@@ -224,18 +215,13 @@ export const getParticipantByUsername = async (
 
     if (docSnap.exists()) {
       const eventData = docSnap.data();
-      console.log("Event data:", eventData);
 
-      // Check if the participants object exists
       if (eventData.participants) {
         const participants = eventData.participants;
-
-        // Iterate over the participants object to find the participant by username
         for (const participantKey in participants) {
           if (participants.hasOwnProperty(participantKey)) {
             const participant = participants[participantKey];
             if (participant.userName === userName) {
-              console.log("Participant found:", participant);
               setFilteredParticipant({ eventId: docSnap.id, participant });
               return; // Exit the loop once participant is found
             }

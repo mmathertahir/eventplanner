@@ -35,26 +35,27 @@ export const createEvent = async (eventData) => {
     console.error("Error creating event:", err);
   }
 };
+
 export const toggleAvailability = async (
   timeslot,
   weekday,
   userData,
-  setUserData
+  setUserData,
+  setCallAvailability
 ) => {
-  let timeslot2 = [timeslot];
-  // weekday = convertDateFormat(weekday);
-
-  // Prepared data for user availability from first slot to last slot
+  setCallAvailability(true);
   await setUserData((prevUserData) => {
-    // if availability.weekday is undefined then include only timeslot
-    // otherwise add prev slots and new slot
+    const currentSlots = prevUserData?.availability?.[weekday] || [];
+    const isPresent = currentSlots.includes(timeslot);
+
+    const newSlots = isPresent
+      ? currentSlots.filter((slot) => slot !== timeslot) // Remove the timeslot if present
+      : [...currentSlots, timeslot]; // Add the timeslot if not present
+
     const newAvailability = {
       ...prevUserData?.availability,
-      [weekday]: prevUserData?.availability?.[weekday]
-        ? [...prevUserData.availability[weekday], timeslot]
-        : [timeslot],
+      [weekday]: newSlots,
     };
-    console.log("preapred data pev data availability weekday", newAvailability);
 
     return {
       ...prevUserData,
@@ -75,7 +76,7 @@ export const logEventData = createAsyncThunk(
         finishTime
       );
       state.hours = hoursDifference;
-      console.log("Event Data:", state);
+
       const eventId = uuidv4();
       state.id = eventId;
 
@@ -98,7 +99,6 @@ export const getDayOfWeek = (specificDates) => {
     console.log("Formatted Date:", formattedDate);
 
     const date = new Date(formattedDate);
-    console.log("Parsed Date:", date);
 
     if (isNaN(date.getTime())) {
       console.error("Invalid Date:", dateString);
@@ -210,7 +210,7 @@ export const getAllEvents = async (setAllEvent) => {
     const querySnapshot = await getDocs(collection(db, "events"));
     querySnapshot.forEach((doc) => {
       const data = doc.data();
-      console.log(doc.id, " => ", data);
+
       array.push({ id: doc.id, ...data }); // Include the document ID in the data object
     });
     setAllEvent(array);
@@ -225,3 +225,66 @@ export const getCurrentEventData = async (eventids) => {
 
   console.log(d.data());
 };
+
+export const getParticularEventdata = async (eventId) => {
+  try {
+    const particularEventRef = doc(db, "events", eventId);
+    const particulareventData = await getDoc(particularEventRef);
+
+    if (!particulareventData.exists()) {
+      console.error("Event not found!");
+      return;
+    }
+
+    const particularData = particulareventData.data();
+
+    console.log(particularData, "Particular EventData");
+
+    return particularData;
+  } catch (error) {
+    console.error("Error fetching event or participant data:", error);
+    throw error;
+  }
+};
+
+export const getParticipantEventData = async (eventId, userName) => {
+  try {
+    const eventRef = doc(db, "events", eventId);
+    const eventSnapshot = await getDoc(eventRef);
+
+    if (!eventSnapshot.exists()) {
+      console.error("Event not found!");
+      return null; // Explicitly return null to indicate the event was not found.
+    }
+
+    const eventData = eventSnapshot.data();
+
+    if (
+      eventData.participants &&
+      eventData.participants.hasOwnProperty(userName)
+    ) {
+      const userData = eventData.participants[userName];
+      console.log(userData, `Data for ${userName}`);
+      return userData; // Return the found user data.
+    } else {
+      console.log(
+        `No data found for user: ${userName} or no participants in this event`
+      );
+      return null; // Explicitly return null to indicate user was not found.
+    }
+  } catch (error) {
+    console.error("Error fetching event or participant data:", error);
+    throw error; // Rethrow to allow further error handling.
+  }
+};
+
+// useEffect(() => {
+//   const fetchData = async () => {
+//     setIsLoading(true);
+//     const eventData = await getDocsbyID(params.eventId);
+//     dispatch(setEventData(eventData));
+//     setIsLoading(false);
+//   };
+
+//   fetchData();
+// }, [dispatch]);
