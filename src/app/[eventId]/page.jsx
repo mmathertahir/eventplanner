@@ -2,7 +2,10 @@
 import React, { useEffect, useState } from "react";
 import { Metadata } from "next";
 
-import { getParticipantEventData } from "@/lib/feature/actions";
+import {
+  getParticipantEventData,
+  sortHoursByTimezone,
+} from "@/lib/feature/actions";
 import {
   getEventData,
   setEventData,
@@ -11,14 +14,10 @@ import {
 } from "@/lib/feature/EventSlice";
 
 import {
-  convertDateFormat,
   getDayOfWeek,
   toggleAvailability,
   getAllEvents,
-  getCurrentUserData,
-  getCurrentEventData,
   getParticularEventdata,
-  getParticepentEventdata,
 } from "@/lib/feature/actions";
 import { getDocsbyID } from "@/lib/feature/EventSlice";
 import { v4 as uuidv4 } from "uuid";
@@ -134,7 +133,6 @@ const Page = ({ params }) => {
   }, [eventData]);
 
   useEffect(() => {
-    setIsLoading(true);
     const updateAndFetchData = async () => {
       if (userData && userData.availability) {
         await handleAvailabilityUpdate(params.eventId, userData);
@@ -143,7 +141,6 @@ const Page = ({ params }) => {
         console.log(eventData, "My Current Event");
         setCurrentData(eventData);
         dispatch(setEventData(eventData));
-        setIsLoading(false);
       }
     };
 

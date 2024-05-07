@@ -11,6 +11,8 @@ import {
   documents,
   push,
 } from "firebase/firestore";
+
+import { DateTime } from "luxon";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { db } from "@/app/firebaseConfig";
 import { useRouter } from "next/router";
@@ -286,3 +288,51 @@ export const getParticipantEventData = async (eventId, userName) => {
 
 //   fetchData();
 // }, [dispatch]);
+
+export function sortHoursByTimezone(hours, timeZone) {
+
+  const currentTime = DateTime.local().setZone(timeZone);
+
+
+  const systemTimeZoneOffset = currentTime.offset;
+
+
+  const utcHours = hours.map((hour) => {
+    const [hourStr, period] = hour.split(" ");
+    let [hourNum, minute] = hourStr.split(":");
+    hourNum = parseInt(hourNum);
+    if (period === "pm" && hourNum !== 12) {
+      hourNum += 12;
+    } else if (period === "am" && hourNum === 12) {
+      hourNum = 0;
+    }
+    return hourNum * 60 + parseInt(minute);
+  });
+  const adjustedHours = utcHours.map((hour) => {
+    let adjustedHour = hour - systemTimeZoneOffset;
+    if (adjustedHour < 0) {
+      adjustedHour += 24 * 60;
+    } else if (adjustedHour >= 24 * 60) {
+      adjustedHour -= 24 * 60;
+    }
+    return adjustedHour;
+  });
+
+
+  adjustedHours.sort((a, b) => a - b);
+  const sortedHours = adjustedHours.map((adjustedHour) => {
+    const hour = Math.floor(adjustedHour / 60);
+    const minute = adjustedHour % 60;
+    const period = hour < 12 ? "am" : "pm";
+    const formattedHour =
+      (hour % 12 || 12) +
+      ":" +
+      (minute < 10 ? "0" : "") +
+      minute +
+      " " +
+      period;
+    return formattedHour;
+  });
+
+  return sortedHours;
+}
