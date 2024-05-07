@@ -1,6 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import Head from "next/head";
+import { Metadata } from "next";
+
 import { getParticipantEventData } from "@/lib/feature/actions";
 import {
   getEventData,
@@ -201,14 +202,6 @@ const Page = ({ params }) => {
 
   return (
     <>
-      <Head>
-        <title>{eventData.eventName} - Event Details</title>
-        <meta
-          name="description"
-          content={`Learn more about ${eventData.eventName}`}
-        />
-      </Head>
-
       <div className="flex flex-col gap-4 w-full ">
         {isLoading ? (
           <div class="flex space-x-2 justify-center items-center bg-white h-screen dark:invert">
@@ -547,3 +540,8 @@ const Page = ({ params }) => {
 };
 
 export default Page;
+export function generateMetaData({ params }) {
+  return {
+    title: eventData.eventName,
+  };
+}
