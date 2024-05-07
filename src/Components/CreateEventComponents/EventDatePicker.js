@@ -7,6 +7,7 @@ import { Calendar } from "react-multi-date-picker";
 const EventDatePicker = () => {
   const dispatch = useDispatch();
   const [selectedOption, setSelectedOption] = useState("specific Dates");
+  const [surveyType, setSurveyType] = useState("");
   const [selectedDates, setSelectedDates] = useState([]);
   let [value, setValue] = useState([]);
   const [selectedDaysOfWeek, setSelectedDaysOfWeek] = useState([]);
@@ -38,6 +39,13 @@ const EventDatePicker = () => {
     );
 
     setSelectedDates();
+  };
+
+  const handlesurveyChange = (event) => {
+    const selectedValue = event.target.value;
+    setSurveyType(selectedValue);
+
+    dispatch(updateEventDetail({ key: "surveyType", value: selectedValue }));
   };
 
   const weekdays = [
@@ -80,8 +88,8 @@ const EventDatePicker = () => {
               Survey Using
             </div>
             <select
-              value={selectedOption}
-              onChange={(e) => handleOptionChange(e.currentTarget.value)}
+              value={surveyType}
+              onChange={handlesurveyChange}
               className="w-full px-[24px] py-[12px] bg-gray-900 text-white rounded-[12px] border-none appearance-none focus:outline-none"
             >
               <option value={"specific Dates"}>Specific Dates</option>
@@ -89,7 +97,7 @@ const EventDatePicker = () => {
             </select>
           </div>
 
-          {selectedOption === "specific Dates" ? (
+          {surveyType === "specific Dates" ? (
             <div>
               <Calendar
                 multiple
@@ -102,18 +110,6 @@ const EventDatePicker = () => {
           ) : (
             <div className="flex flex-col gap-2">
               {weekdays.map((day, index) => (
-                // <div
-                //   key={index}
-                //   className={`h-[40px] flex items-center justify-center rounded-lg border ${
-                //     selectedDays?.includes(day)
-                //       ? "bg-greenF text-blackOA"
-                //       : "bg-gray-300"
-                //   }`}
-                //   onClick={() => handleSelectDayOfWeek(day)}
-                // >
-                //   {day}
-                // </div>
-
                 <div
                   key={index}
                   className={`h-[40px] flex items-center justify-center rounded-lg border ${

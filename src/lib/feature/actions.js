@@ -40,10 +40,8 @@ export const toggleAvailability = async (
   timeslot,
   weekday,
   userData,
-  setUserData,
-  setCallAvailability
+  setUserData
 ) => {
-  setCallAvailability(true);
   await setUserData((prevUserData) => {
     const currentSlots = prevUserData?.availability?.[weekday] || [];
     const isPresent = currentSlots.includes(timeslot);

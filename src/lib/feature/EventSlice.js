@@ -21,6 +21,7 @@ const initialState = {
   id: "",
   eventName: "",
   timeZone: "",
+  surveyType: "",
   specificDays: [],
   specificDates: [],
   initialTime: "",
