@@ -1,6 +1,18 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { Metadata } from "next";
+import {
+  FacebookShareButton,
+  FacebookIcon,
+  PinterestShareButton,
+  PinterestIcon,
+  RedditShareButton,
+  RedditIcon,
+  WhatsappShareButton,
+  WhatsappIcon,
+  LinkedinShareButton,
+  LinkedinIcon,
+} from "next-share";
 
 import {
   getParticipantEventData,
@@ -221,9 +233,16 @@ const Page = ({ params }) => {
 
                     <p className="font-normal text-white ">
                       To invite people to this event, you can 
-                      <span className="text-blue-900">email</span> them, send
-                      them a 
-                      <span className="text-blue-900">Facebook message</span>,
+                      <a href="mailto:" className="text-blue-900">
+                        email
+                      </a>{" "}
+                      them, send them a 
+                      <a
+                        href="https://www.facebook.com/messages/t/"
+                        className="text-blue-900"
+                      >
+                        Facebook Messenger
+                      </a>
                       or just direct them to
                       <span className="text-blue-900"> here</span>.
                     </p>
