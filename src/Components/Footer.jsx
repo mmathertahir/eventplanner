@@ -3,8 +3,8 @@ import React from "react";
 
 const Footer = () => {
   return (
-    <nav class="bg-blackD  px-4 lg:px-6 py-6  ">
-      <div class="flex flex-col  gap-4  md:gap-2 md:flex-row  justify-between items-center  mx-auto max-w-screen-xl">
+    <nav className="bg-blackD  px-4 lg:px-6 py-6  ">
+      <div className="flex flex-col  gap-4  md:gap-2 md:flex-row  justify-between items-center  mx-auto max-w-screen-xl">
         <div className="flex flex-col  gap-4   md:flex-row items-center  gap-x-[60px]">
           <Link
             href={"#"}
@@ -15,7 +15,7 @@ const Footer = () => {
 
           <button
             type="button"
-            class="text-white bg-gray-900 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+            className="text-white bg-gray-900 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
           >
             Donate
           </button>

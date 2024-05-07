@@ -134,6 +134,7 @@ const Page = ({ params }) => {
   }, [eventData]);
 
   useEffect(() => {
+    setIsLoading(true);
     const updateAndFetchData = async () => {
       if (userData && userData.availability) {
         await handleAvailabilityUpdate(params.eventId, userData);
@@ -142,6 +143,7 @@ const Page = ({ params }) => {
         console.log(eventData, "My Current Event");
         setCurrentData(eventData);
         dispatch(setEventData(eventData));
+        setIsLoading(false);
       }
     };
 
@@ -204,11 +206,11 @@ const Page = ({ params }) => {
     <>
       <div className="flex flex-col gap-4 w-full ">
         {isLoading ? (
-          <div class="flex space-x-2 justify-center items-center bg-white h-screen dark:invert">
-            <span class="sr-only">Loading...</span>
-            <div class="h-8 w-8 bg-black rounded-full animate-bounce [animation-delay:-0.3s]"></div>
-            <div class="h-8 w-8 bg-black rounded-full animate-bounce [animation-delay:-0.15s]"></div>
-            <div class="h-8 w-8 bg-black rounded-full animate-bounce"></div>
+          <div className="flex space-x-2 justify-center items-center bg-white h-screen dark:invert">
+            <span className="sr-only">Loading...</span>
+            <div className="h-8 w-8 bg-black rounded-full animate-bounce [animation-delay:-0.3s]"></div>
+            <div className="h-8 w-8 bg-black rounded-full animate-bounce [animation-delay:-0.15s]"></div>
+            <div className="h-8 w-8 bg-black rounded-full animate-bounce"></div>
           </div>
         ) : (
           <>
@@ -299,7 +301,7 @@ const Page = ({ params }) => {
                   </div>
 
                   <div className="flex flex-col  gap-2">
-                    <div class=" flex flex-col lg:flex-row  lg:items-center  gap-y-3  ">
+                    <div className=" flex flex-col lg:flex-row  lg:items-center  gap-y-3  ">
                       <div className="text-white text-[12px]  w-full lg:w-1/4  ">
                         Your Name
                       </div>
@@ -313,7 +315,7 @@ const Page = ({ params }) => {
                       ></input>
                     </div>
 
-                    <div class=" flex flex-col lg:flex-row  lg:items-center  gap-y-3  ">
+                    <div className=" flex flex-col lg:flex-row  lg:items-center  gap-y-3  ">
                       <div className="text-white text-[12px]  w-full lg:w-1/4  ">
                         Password(optional)
                       </div>
@@ -331,7 +333,7 @@ const Page = ({ params }) => {
                   <div className="flex items-center justify-center">
                     <button
                       type="submit"
-                      class=" w-fit  text-blackOA bg-greenF hover:bg-blue-800 hover:text-white focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800 "
+                      className=" w-fit  text-blackOA bg-greenF hover:bg-blue-800 hover:text-white focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800 "
                     >
                       Sign In
                     </button>
@@ -361,22 +363,22 @@ const Page = ({ params }) => {
                         {userData?.userName}
                       </div>
 
-                      <p className="font-normal text-white">
+                      <p className="font-normal text-white p-2">
                         Click and drag to toggle, save immediately
                       </p>
                     </div>
 
                     <div className="flex  flex-row mx-0 gap-3 justify-center items-center">
-                      <div className="flex flex-row gap-4 items-center">
+                      <div className="flex flex-col md:flex-row gap-4 md:items-center">
                         <p className="font-normal text-white">Unavailable</p>
 
-                        <div className="py-6 px-10 bg-white"></div>
+                        <div className="py-3 py-3   md:py-6 md:px-10  bg-white"></div>
                       </div>
 
-                      <div className="flex flex-row gap-4 items-center">
+                      <div className="flex  flex-col  md:flex-row gap-4 md:items-center">
                         <p className="font-normal text-white">Available</p>
 
-                        <div className="py-6 px-10 bg-greenF"></div>
+                        <div className="py-3 py-3   md:py-6 md:px-10 bg-greenF"></div>
                       </div>
                     </div>
                   </div>
@@ -424,7 +426,7 @@ const Page = ({ params }) => {
                                     : "black",
                                 }}
                               >
-                                <div class="   border-y  w-full border-dotted  "></div>
+                                <div className="   border-y  w-full border-dotted  "></div>
                               </td>
                             ))}
                           </tr>
@@ -448,18 +450,20 @@ const Page = ({ params }) => {
                   </div>
 
                   <div className="flex  flex-row mx-0 gap-3 justify-center items-center">
-                    <p className="font-normal text-white">
+                    <div className="font-normal text-white">
                       <p className="font-normal text-white">
                         {availableCount}/{availableCount + unavailableCount}{" "}
                         available
                       </p>
-                    </p>
+                    </div>
 
                     <table width={100} className="rounded-[12px]">
-                      <tr>
-                        <td className="bg-greenF  py-6 px-6"></td>
-                        <td className="bg-white  py-6 px-6"></td>
-                      </tr>
+                      <tbody>
+                        <tr>
+                          <td className="bg-greenF  py-6 px-6"></td>
+                          <td className="bg-white  py-6 px-6"></td>
+                        </tr>
+                      </tbody>
                     </table>
 
                     <p className="font-normal text-white">
@@ -516,7 +520,7 @@ const Page = ({ params }) => {
                               }
                               // onMouseLeave={handleMouseLeave}
                             >
-                              <div class="   border-y  w-full border-dotted "></div>
+                              <div className="   border-y  w-full border-dotted "></div>
                             </td>
                           ))}
                         </tr>
@@ -540,7 +544,7 @@ const Page = ({ params }) => {
 };
 
 export default Page;
-export function generateMetaData({ params }) {
+export function generateMetaData({ params, eventData }) {
   return {
     title: eventData.eventName,
   };

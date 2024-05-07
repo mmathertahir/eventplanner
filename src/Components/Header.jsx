@@ -6,9 +6,9 @@ import logo from "../../public/assets/images/when2meetlogo.png";
 const Header = () => {
   return (
     <header className="sticky top-0 z-30">
-      <nav class="bg-blackD  px-20  py-6  ">
-        <div class="flex flex-col  conatiner gap-4   md:gap-0 md:flex-row  justify-between items-center ">
-          <Link href="/" class="flex items-center">
+      <nav className="bg-blackD  px-20  py-6  ">
+        <div className="flex flex-col  conatiner gap-4   md:gap-0 md:flex-row  justify-between items-center ">
+          <Link href="/" className="flex items-center">
             <Image src={logo} alt="" />
           </Link>
 
@@ -28,7 +28,7 @@ const Header = () => {
                 Plan a New Event
               </Link>
 
-              <div class=" absolute bg-greenF  h-[8px] w-[60px] bottom-[-26px]  left-[39%] rounded-tl-[100px] rounded-tr-[100px]"></div>
+              <div className=" absolute bg-greenF  h-[8px] w-[60px] bottom-[-26px]  left-[39%] rounded-tl-[100px] rounded-tr-[100px]"></div>
             </div>
           </div>
         </div>
