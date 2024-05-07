@@ -198,10 +198,9 @@ const Page = ({ params }) => {
 
   console.log(currentDate, "Current Survey Type");
 
-  const router = useRouter();
-  const currentPath = encodeURIComponent(router.asPath);
+  const currentPath = window.location.href;
 
-  console.log(window.location.href);
+  console.log(currentPath);
   return (
     <>
       <div className="flex flex-col gap-4 w-full ">
@@ -229,7 +228,7 @@ const Page = ({ params }) => {
                       </a>{" "}
                       them, send them a 
                       <a
-                        href={`https://www.facebook.com/sharer/sharer.php?u=${currentPath}`}
+                        href={`https://facebook.com/sharer/sharer.php?u=${currentPath}`}
                         className="text-blue-900"
                         target="_blank"
                         rel="noopener noreferrer"
