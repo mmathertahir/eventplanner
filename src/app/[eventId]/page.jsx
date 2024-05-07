@@ -1,19 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { Metadata } from "next";
-import {
-  FacebookShareButton,
-  FacebookIcon,
-  PinterestShareButton,
-  PinterestIcon,
-  RedditShareButton,
-  RedditIcon,
-  WhatsappShareButton,
-  WhatsappIcon,
-  LinkedinShareButton,
-  LinkedinIcon,
-} from "next-share";
-
+import { FacebookShare } from "react-share-kit";
+import { useRouter } from "next/navigation";
 import {
   getParticipantEventData,
   sortHoursByTimezone,
@@ -24,7 +12,6 @@ import {
   handleAvailabilityUpdate,
   handlememberUpdate,
 } from "@/lib/feature/EventSlice";
-
 import {
   getDayOfWeek,
   toggleAvailability,
@@ -38,6 +25,7 @@ import { useDispatch, useSelector } from "react-redux";
 
 import { useTimezoneSelect, allTimezones } from "react-timezone-select";
 import AvailabilityShowModel from "@/Components/AvailabilityShowModel";
+import Link from "next/link";
 
 const labelStyle = "original";
 const timezones = {
@@ -51,7 +39,6 @@ const Page = ({ params }) => {
   const [CallAvailability, setCallAvailability] = useState(false);
 
   const [showModal, setShowModal] = useState(false);
-
   const [userData, setUserData] = useState({
     userName: "",
     userId: "",
@@ -211,6 +198,10 @@ const Page = ({ params }) => {
 
   console.log(currentDate, "Current Survey Type");
 
+  const router = useRouter();
+  const currentPath = encodeURIComponent(router.asPath);
+
+  console.log(window.location.href);
   return (
     <>
       <div className="flex flex-col gap-4 w-full ">
@@ -238,10 +229,12 @@ const Page = ({ params }) => {
                       </a>{" "}
                       them, send them a 
                       <a
-                        href="https://www.facebook.com/messages/t/"
+                        href={`https://www.facebook.com/sharer/sharer.php?u=${currentPath}`}
                         className="text-blue-900"
+                        target="_blank"
+                        rel="noopener noreferrer"
                       >
-                        Facebook Messenger
+                        Share on Facebook
                       </a>
                       or just direct them to
                       <span className="text-blue-900"> here</span>.
