@@ -85,7 +85,7 @@ const Page = ({ params }) => {
 
     const { userName, userId, eventId, usertimezone } = updatedUserData;
 
-    if (!userName || !userId || !eventId || !usertimezone) {
+    if (!userName || !userId || !eventId) {
       alert(
         "Invalid participant data: userName, userId, eventId, and timeZone are required."
       );

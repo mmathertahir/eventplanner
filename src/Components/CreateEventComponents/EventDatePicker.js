@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { updateEventDetail } from "@/lib/feature/EventSlice";
 import { Calendar } from "react-multi-date-picker";
@@ -7,7 +7,7 @@ import { Calendar } from "react-multi-date-picker";
 const EventDatePicker = () => {
   const dispatch = useDispatch();
   const [selectedOption, setSelectedOption] = useState("specific Dates");
-  const [surveyType, setSurveyType] = useState("");
+  const [surveyType, setSurveyType] = useState("specific Dates");
   const [selectedDates, setSelectedDates] = useState([]);
   let [value, setValue] = useState([]);
   const [selectedDaysOfWeek, setSelectedDaysOfWeek] = useState([]);
@@ -48,15 +48,7 @@ const EventDatePicker = () => {
     dispatch(updateEventDetail({ key: "surveyType", value: selectedValue }));
   };
 
-  const weekdays = [
-    "Sunday",
-    "Monday",
-    "Tuesday",
-    "Wednesday",
-    "Thursday",
-    "Friday",
-    "Saturday",
-  ];
+  const weekdays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
   const handleSelectDayOfWeek = (day) => {
     setSelectedDays((prevSelectedDays) => {
@@ -69,6 +61,10 @@ const EventDatePicker = () => {
 
     dispatch(updateEventDetail({ key: "specificDays", value: selectedDays })); // Assuming you have an action creator named updateSelectedDays
   };
+
+  useEffect(() => {
+    handlesurveyChange({ target: { value: surveyType } }); // Simulate an event object
+  }, []);
 
   return (
     <div className="flex flex-col gap-10">
